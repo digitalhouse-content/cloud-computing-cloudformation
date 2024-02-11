@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creando el entorno para ECS
+
+Resources:
+    VPC:
+        Type: 'AWS::EC2::VPC'
+        Properties:
+            CidrBlock: 10.0.0.0/16
+            EnableDnsSupport: true
+            EnableDnsHostnames: true
+            Tags:
+                - Key: Name
+                  Value: VPC
+    SubredPublica:
+        Type: 'AWS::EC2::Subnet'
+        Properties:
+            VpcId: !Ref VPC
+            CidrBlock: 10.0.1.0/24
+            AvailabilityZone: !Select [ 0, !GetAZs '' ]
+            MapPublicIpOnLaunch: true
+            Tags:
+                - Key: Name
+                  Value: SubredPublica
+    SubredPrivada:
+        Type: 'AWS::EC2::Subnet'
+        Properties:
+            VpcId: !Ref VPC
+            CidrBlock: 10.0.2.0/24
+            AvailabilityZone: !Select [ 0, !GetAZs '' ]
+            MapPublicIpOnLaunch: false
+            Tags:
+                - Key: Name
+                  Value: SubredPrivada
+
+    InternetGateway:
+        Type: 'AWS::EC2::InternetGateway'
+        Properties: {}
+    RouteTable:
+        Type: 'AWS::EC2::RouteTable'
+        Properties:
+            VpcId: !Ref VPC
+            Tags:
+                - Key: Name
+                  Value: RouteTable
+    PublicRoute:
+        Type: 'AWS::EC2::Route'
+        Properties:
+            RouteTableId: !Ref RouteTable
+            DestinationCidrBlock: 0.0.0.0/0
+            GatewayId: !Ref InternetGateway
+        DependsOn: InternetGateway
+    SubnetRouteTableAssociation:
+        Type: 'AWS::EC2::SubnetRouteTableAssociation'
+        Properties:
+            SubnetId: !Ref SubredPublica
+            RouteTableId: !Ref RouteTable
+    VPCGatewayAttachment:
+        Type: 'AWS::EC2::VPCGatewayAttachment'
+        Properties:
+            VpcId: !Ref VPC
+            InternetGatewayId: !Ref InternetGateway
