@@ -99,3 +99,8 @@ Resources:
                         - logs:CreateLogStream
                         - logs:PutLogEvents
                       Resource: '*'
+    
+    RepositorioECR:
+        Type: 'AWS::ECR::Repository'
+        Properties:
+            RepositoryName: !Sub "${AWS::StackName}-application"
