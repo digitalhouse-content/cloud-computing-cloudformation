@@ -4,6 +4,14 @@ Parameters:
     BucketName:
         Type: String
         Description: El nombre del bucket a crear
+Mappings:
+    RegionTags:
+        us-east-1:
+            Environment: "Prod"
+            RegionName: "US East 1"
+        us-east-2:
+            Environment: "Dev"
+            RegionName: "US East 2"
 Resources:
     MiBucket:
         Type: 'AWS::S3::Bucket'
@@ -14,3 +22,7 @@ Resources:
             Tags:
                 - Key: Aprendiendo
                   Value: Cloudformation
+                - Key: Environment
+                  Value: !FindInMap [RegionTags, !Ref "AWS::Region",Environment] 
+                - Key: RegionName
+                  Value: !FindInMap [RegionTags, !Ref "AWS::Region",RegionName] 
