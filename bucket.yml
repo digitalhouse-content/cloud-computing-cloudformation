@@ -1,10 +1,14 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Ejemplo simple de creacion de un bucket.
+Parameters:
+    BucketName:
+        Type: String
+        Description: El nombre del bucket a crear
 Resources:
     MiBucket:
         Type: 'AWS::S3::Bucket'
         Properties:
-            BucketName: cloudformation-dh-cloud
+            BucketName: !Ref BucketName
             VersioningConfiguration:
                 Status: Enabled
             Tags:
