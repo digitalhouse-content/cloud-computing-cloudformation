@@ -12,13 +12,15 @@ Mappings:
         us-east-2:
             Environment: "Dev"
             RegionName: "US East 2"
+Conditions:
+    IsProdEnvironment: !Equals [ !Ref "AWS::Region", "us-east-1" ]
 Resources:
     MiBucket:
         Type: 'AWS::S3::Bucket'
         Properties:
             BucketName: !Ref BucketName
             VersioningConfiguration:
-                Status: Enabled
+                Status: !If [ IsProdEnvironment, "Enabled", "Suspended" ]
             Tags:
                 - Key: Aprendiendo
                   Value: Cloudformation
