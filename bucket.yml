@@ -27,4 +27,15 @@ Resources:
                 - Key: Environment
                   Value: !FindInMap [RegionTags, !Ref "AWS::Region",Environment] 
                 - Key: RegionName
-                  Value: !FindInMap [RegionTags, !Ref "AWS::Region",RegionName] 
+                  Value: !FindInMap [RegionTags, !Ref "AWS::Region",RegionName]
+Outputs:
+    BucketNameOutput:
+        Description: "Nombre del bucket S3"
+        Value: !Ref MiBucket
+        Export:
+            Name: !Sub "${AWS::StackName}-BucketName"
+    BucketURL:
+        Description: "URL del Bucket"
+        Value: !GetAtt MiBucket.DomainName
+        Export:
+            Name: !Sub "${AWS::StackName}-BucketURL"
