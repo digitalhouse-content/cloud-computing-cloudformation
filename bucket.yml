@@ -1,0 +1,7 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Ejemplo simple de creacion de un bucket.
+Resources:
+    MiBucket:
+        Type: 'AWS::S3::Bucket'
+        Properties:
+            BucketName: cloudformation-dh-cloud
