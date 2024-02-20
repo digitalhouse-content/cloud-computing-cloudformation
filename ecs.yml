@@ -104,3 +104,39 @@ Resources:
         Type: 'AWS::ECR::Repository'
         Properties:
             RepositoryName: !Sub "${AWS::StackName}-application"
+
+    ClusterECS:
+        Type: 'AWS::ECS::Cluster'
+
+    Tarea:
+        Type: 'AWS::ECS::TaskDefinition'
+        Properties:
+            Family: !Sub "${AWS::StackName}-application"
+            Cpu: 1024
+            Memory: 2048
+            NetworkMode: awsvpc
+            RequiresCompatibilities:
+              - FARGATE
+            ExecutionRoleArn: !GetAtt RolDeEjecucion.Arn
+            ContainerDefinitions:
+              - Name: !Sub "${AWS::StackName}-container"
+                Image: !GetAtt RepositorioECR.RepositoryUri
+                Essential: true
+                PortMappings:
+                  - ContainerPort: 3000
+
+    Servicio:
+        Type: 'AWS::ECS::Service'
+        Properties:
+            ServiceName: !Sub "${AWS::StackName}-service"
+            Cluster: !Ref ClusterECS
+            TaskDefinition: !Ref Tarea
+            DesiredCount: 1
+            LaunchType: FARGATE
+            NetworkConfiguration:
+                AwsvpcConfiguration:
+                    Subnets:
+                      - !Ref SubredPublica
+                    SecurityGroups:
+                      - !Ref GrupoDeSeguridad
+                    AssignPublicIp: "ENABLED"
